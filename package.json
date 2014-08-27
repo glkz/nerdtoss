@@ -1,0 +1,29 @@
+{
+  "name": "nerdtoss",
+  "version": "0.0.0",
+  "description": "Coin tossing for nerds",
+  "keywords": [
+    "coin flip",
+    "coin toss",
+    "heads",
+    "tails"
+  ],
+  "main": "toss.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },  
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/glkz/nerdtoss.git"
+  },
+  "author": "Mustafa Altun <gmail@mustafaaltun.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/glkz/nerdtoss/issues"
+  },
+  "homepage": "https://github.com/glkz/nerdtoss",
+  "preferGlobal": true,
+  "bin": {
+    "nerdtoss": "toss.js"
+  }
+}
