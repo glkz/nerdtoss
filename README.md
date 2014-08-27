@@ -7,4 +7,4 @@
 
     nerdtoss
 
-![](https://github.com/glkz/nerdtoss/blob/master/cli.png)
+![](https://raw.githubusercontent.com/glkz/nerdtoss/master/cli.gif)
