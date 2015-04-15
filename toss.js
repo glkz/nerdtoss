@@ -1,53 +1,70 @@
 #!/usr/bin/env node
 
-"use strict";
+'use strict';
 
 var config = require('./config');
+var crypto = require('crypto');
 
 var rnd = function() {
-  //return Math.random() > .5 ? 1 : 0;
-  return require('crypto').randomBytes(1).readUInt8(0) & 1;
+  return crypto.randomBytes(1).readUInt8(0);
 };
 
-var genSeq = function(result, n, blinks) {
-  var seq = [];
-  for (var i = 0; i < n; i++) {
-    seq.push((result + n - i - 1) % 2);
-  }
-
-  for (i = 0; i < blinks; i++) {
-    seq.push(2);
-    seq.push(result);
+var rndSeq = function(modulo, size, seq) {
+  seq = seq || [];
+  for (var i = seq.length; i < size; i++) {
+    seq[i] = rnd() % modulo;
+    if (seq[i] === seq[i - 1]) {
+      seq[i] = (seq[i] + 1) % modulo;
+    }
   }
 
   return seq;
 };
 
-var format = function(v, width) {
-  var str = config.STRINGS[v];  
-  return require('util').format(config.STYLES[v], str) + new Array(width - str.length + 1).join(' ');
+var colorize = function(str, colors) {
+  var open = '';
+  var close = '';
+  colors.forEach(function(prop) {
+    open = open + prop.open;
+    close = prop.close + close;
+  });
+
+  return open + str + close;
 };
 
-var toss = function(output, result, n, blinks) {
-  var seq = genSeq(result, 
-    n || Math.ceil(Math.random() * 5) + 5, 
-    blinks || config.BLINK_NUM);
+var pad = function(len) {
+  return new Array(len).join(' ');
+};
 
+var format = function(choice, style, width) {
+  var str = '  ' + choice + '  ';
+  if (!choice || choice.length === 0) {
+    return pad(width);
+  }
+  return colorize(str, style) + pad(width - str.length);
+};
+
+var toss = function(output, choices, config) {
+  var seq = rndSeq(choices.length, Math.min(choices.length * 3, 10));
+  for (var j = 0; j < config.blink_num; j++) {
+    seq.unshift(seq[0], '');
+  }
+
+  var i = seq.length - 1;
   var draw = function() {
-    if (i === seq.length) {
+    if (i < 0) {
       clearInterval(intervalId);
-      output.write("\n");
+      output.write('\n');
       return;
     }
- 
+
     output.cursorTo(0);
-    output.write(new Buffer(format(seq[i], output.columns)));
-    i++;
+    var choice = choices[seq[i]];
+    output.write(new Buffer(format(choice, config.styles[seq[i] % config.styles.length], output.columns)));
+    i--;
   };
 
-  var i = 0;
-  var intervalId = setInterval(draw, config.DELAY);
-  
+  var intervalId = setInterval(draw, config.delay);
   draw();
 };
 
@@ -55,4 +72,9 @@ if (!process.stdout.isTTY) {
   return ;
 }
 
-toss(process.stdout, rnd());
+var choices = process.argv.slice(2);
+if (choices.length === 0) {
+  choices = ['HEADS', 'TAILS'];
+}
+
+toss(process.stdout, choices, config);

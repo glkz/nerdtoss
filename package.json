@@ -11,7 +11,7 @@
   "main": "toss.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
-  },  
+  },
   "repository": {
     "type": "git",
     "url": "git://github.com/glkz/nerdtoss.git"
@@ -25,5 +25,8 @@
   "preferGlobal": true,
   "bin": {
     "nerdtoss": "toss.js"
+  },
+  "dependencies": {
+    "ansi-styles": "^2.0.1"
   }
 }
